@@ -1,5 +1,6 @@
 // const fs = require('fs');
 const Tour = require('../models/tourModel');
+const APIFeatures = require('../utils/apiFeatures');
 
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -53,41 +54,47 @@ exports.createTour = async (req, res) => {
 exports.getAllTours = async (req, res) => {
   try {
     // using the filter object of mongodb to build the Query
-    const queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach((field) => delete queryObj[field]);
+    // const queryObj = { ...req.query };
+    // const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    // excludedFields.forEach((field) => delete queryObj[field]);
 
-    // 2) ADVANCED FILTERING // {difficulty:'easy', duration:{$gte:5}}
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    let query = Tour.find(JSON.parse(queryStr));
+    // // 2) ADVANCED FILTERING // {difficulty:'easy', duration:{$gte:5}}
+    // let queryStr = JSON.stringify(queryObj);
+    // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    // let query = Tour.find(JSON.parse(queryStr));
 
-    // 3) SORTING
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-createdAt');
-    }
+    // // 3) SORTING
+    // if (req.query.sort) {
+    //   const sortBy = req.query.sort.split(',').join(' ');
+    //   query = query.sort(sortBy);
+    // } else {
+    //   query = query.sort('-createdAt');
+    // }
 
-    // 4) LIMIT FIELDS
-    if (req.query.fields) {
-      const projectedFields = req.query.fields.split(',').join(' ');
-      query = query.select(projectedFields);
-    } else {
-      query = query.select('-__v');
-    }
+    // // 4) LIMIT FIELDS
+    // if (req.query.fields) {
+    //   const projectedFields = req.query.fields.split(',').join(' ');
+    //   query = query.select(projectedFields);
+    // } else {
+    //   query = query.select('-__v');
+    // }
 
-    // 5) PAGINATION
-    // 1-10 --> Page 1, 11-20 --> Page 2
-    // mongodb query --> page=2&limit=10
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-    const skip = (page - 1) * limit;
-    query = query.skip(skip).limit(limit);
+    // // 5) PAGINATION
+    // // 1-10 --> Page 1, 11-20 --> Page 2
+    // // mongodb query --> page=2&limit=10
+    // const page = req.query.page * 1 || 1;
+    // const limit = req.query.limit * 1 || 100;
+    // const skip = (page - 1) * limit;
+    // query = query.skip(skip).limit(limit);
 
     // EXECUTE QUERY
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .paginate();
+
+    const tours = await features.query;
 
     // another way of writing the query
     // const tours = await Tour.find()
