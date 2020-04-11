@@ -27,6 +27,14 @@ const Tour = require('../models/tourModel');
 //   next();
 // };
 
+exports.aliasTopTours = (req, res, next) => {
+  console.log('Executing aliasTopTours MiddleWare 🖖');
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+};
+
 exports.createTour = async (req, res) => {
   try {
     // using the Tour model to create the document
