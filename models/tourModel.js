@@ -36,7 +36,8 @@ const tourSchema = new mongoose.Schema({
     required: [true, 'A Tour must have an imageCover'],
   },
   images: [String],
-  createdAt: { type: Date, default: Date.now() },
+  // select: false will not select that field in the result set
+  createdAt: { type: Date, default: Date.now(), select: false },
   startDates: [Date],
   price: { type: Number, required: [true, 'A tour must have a price'] },
 });

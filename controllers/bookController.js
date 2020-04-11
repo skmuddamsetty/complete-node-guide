@@ -12,9 +12,6 @@ exports.createBook = async (req, res) => {
   } catch (err) {
     res.status(400).json({ status: 'fail', message: err });
   }
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route is not yet defined' });
 };
 
 exports.getAllBooks = (req, res) => {
