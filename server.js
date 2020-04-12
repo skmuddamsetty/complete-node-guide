@@ -1,5 +1,14 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
+// handling uncaught exception
+process.on('uncaughtException', (err) => {
+  console.log('UNHANDLED EXCEPTION! Shutting down Server!');
+  console.log(err.name, err.message);
+  // server.close gives time to the server to finish the requests that are being handled and then the process.exit shutdowns the server.
+  process.exit(1);
+});
+
 // dotenv will read the files from configuration file and save them to NODEJS environment variables
 dotenv.config({ path: './config.env' });
 const app = require('./app');
@@ -39,4 +48,16 @@ mongoose
 //   .catch((err) => console.log(`ERROR ❌:,${err}`));
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`App Running On Port ${port}`));
+const server = app.listen(port, () =>
+  console.log(`App Running On Port ${port}`)
+);
+
+// used to handle unhandled Promise Rejection
+process.on('unhandledRejection', (err) => {
+  console.log('UNHANDLED REJECTION! Shutting down Server!');
+  console.log(err.name, err.message);
+  // server.close gives time to the server to finish the requests that are being handled and then the process.exit shutdowns the server.
+  server.close(() => {
+    process.exit(1);
+  });
+});
