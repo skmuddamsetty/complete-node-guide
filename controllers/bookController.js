@@ -1,39 +1,53 @@
 const Book = require('../models/bookModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
-exports.createBook = async (req, res) => {
-  try {
-    const book = await Book.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      data: {
-        book,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({ status: 'fail', message: err });
+exports.createBook = catchAsync(async (req, res, next) => {
+  const book = await Book.create(req.body);
+  res.status(201).json({
+    status: 'success',
+    data: {
+      book,
+    },
+  });
+});
+
+exports.getAllBooks = catchAsync(async (req, res, next) => {
+  const books = await Book.find();
+  res
+    .status(200)
+    .json({ status: 'success', results: books.length, data: { books } });
+});
+
+exports.getBook = catchAsync(async (req, res, next) => {
+  const book = await Book.findById({ _id: req.params.id });
+  if (!book) {
+    return next(
+      new AppError(`Book with ID: ${req.params.id} is not found!`, 404)
+    );
   }
-};
+  res.status(200).json({ status: 'success', data: { book } });
+});
 
-exports.getAllBooks = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route is not yet defined' });
-};
+exports.updateBook = catchAsync(async (req, res, next) => {
+  const book = await Book.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!book) {
+    return next(
+      new AppError(`Book with ID: ${req.params.id} is not found!`, 404)
+    );
+  }
+  res.status(200).json({ status: 'success', data: { book } });
+});
 
-exports.getBook = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route is not yet defined' });
-};
-
-exports.updateBook = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route is not yet defined' });
-};
-
-exports.deleteBook = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route is not yet defined' });
-};
+exports.deleteBook = catchAsync(async (req, res, next) => {
+  const book = await Book.findByIdAndDelete(req.params.id);
+  if (!book) {
+    return next(
+      new AppError(`Book with ID: ${req.params.id} is not found!`, 404)
+    );
+  }
+  res.status(201).json({ status: 'success', data: null });
+});
