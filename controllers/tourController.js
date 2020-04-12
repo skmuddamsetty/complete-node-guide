@@ -2,6 +2,7 @@
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -147,6 +148,9 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // }
 
   const tour = await Tour.findById({ _id: req.params.id });
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
   res.status(200).json({
     status: 'success',
     data: { tour },
@@ -174,6 +178,9 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
   res.status(200).json({
     status: 'success',
     data: {
@@ -193,7 +200,10 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   // } catch (err) {
   //   res.status(404).json({ status: 'fail', message: err });
   // }
-  await Tour.findOneAndDelete(req.params.id);
+  const tour = await Tour.findOneAndDelete(req.params.id);
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
   // 204 - No Content
   res.status(204).json({
     status: 'success',
