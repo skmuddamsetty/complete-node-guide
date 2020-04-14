@@ -38,6 +38,8 @@ exports.protect = catchAsync(async (req, res, next) => {
       )
     );
   }
+  // 5) GRANT ACCESS TO THE PROTECTED ROUTE
+  req.user = freshUser;
   next();
 });
 
