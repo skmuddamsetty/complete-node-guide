@@ -25,6 +25,10 @@ router
   .route('/:id')
   .get(tourContoller.getTour)
   .patch(tourContoller.updateTour)
-  .delete(tourContoller.deleteTour);
+  .delete(
+    authContoller.protect,
+    authContoller.restrictTo('admin', 'lead-guide'),
+    tourContoller.deleteTour
+  );
 
 module.exports = router;
