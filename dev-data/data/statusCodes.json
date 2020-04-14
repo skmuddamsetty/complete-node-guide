@@ -6,5 +6,6 @@
   "201": "Created",
   "400": "Fail",
   "500": "Error",
-  "204": "No Content"
+  "204": "No Content",
+  "401": "UnAuthorized"
 }
