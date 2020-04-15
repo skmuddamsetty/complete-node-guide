@@ -43,12 +43,14 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
+// this is going to run right before the new document is saved
 userSchema.pre('save', async function (next) {
   // this keyword refers to the current document and we are checking if the password has been modified
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || this.isNew) return next();
   this.password = await bcrypt.hash(this.password, 12);
   // setting this to undefined will not persist this field to database
   this.passwordConfirm = undefined;
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
