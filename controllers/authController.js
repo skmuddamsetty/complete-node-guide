@@ -51,10 +51,16 @@ const signToken = (id) => {
   });
 };
 
+const createAndSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({ status: 'success', token, data: { user } });
+};
+
 exports.signup = catchAsync(async (req, res) => {
   const newUser = await User.create(req.body);
-  const token = signToken(newUser._id);
-  res.status(201).json({ status: 'success', token, data: { user: newUser } });
+  createAndSendToken(newUser, 201, res);
+  // const token = signToken(newUser._id);
+  // res.status(201).json({ status: 'success', token, data: { user: newUser } });
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -71,8 +77,9 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Email or Password is Incorrect!', 401));
   }
   // 3) If everthing okay, send token to the client
-  const token = signToken(user._id);
-  res.status(200).json({ status: 'success', token });
+  createAndSendToken(user, 200, res);
+  // const token = signToken(user._id);
+  // res.status(200).json({ status: 'success', token });
 });
 
 exports.restrictTo = (...roles) => {
@@ -151,6 +158,22 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 3) Update passwordChangedAt property for the user --> this is done in the userModel pre save hook
   await user.save();
   // 4) Log the user in --> send the jsonwebtoken
-  const token = signToken(user._id);
-  res.status(200).json({ status: 'success', token });
+  // const token = signToken(user._id);
+  // res.status(200).json({ status: 'success', token });
+  createAndSendToken(user, 200, res);
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1) We need to get the user from the collection
+  // 2) check if posted current password is correct
+  const user = await User.findById(req.user.id).select('+password');
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new AppError('Your current password is wrong.', 401));
+  }
+  // 3) If so, update the password // password hashing will be taken care by pre save hook on user model
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+  // 4) Log the user in, send JWT
+  createAndSendToken(user, 200, res);
 });

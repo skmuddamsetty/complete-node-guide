@@ -30,7 +30,8 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   console.log(`Hello From requestTime MiddleWare! 🖖`);
   req.requestTime = new Date().toISOString();
-  console.log(req.headers);
+  // to get the headers
+  // console.log(req.headers);
   next();
 });
 
