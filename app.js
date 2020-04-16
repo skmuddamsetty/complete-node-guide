@@ -46,7 +46,18 @@ app.use(mongoSanitize());
 app.use(xss());
 
 //prevent parameter pollution
-app.use(hpp({ whitelist: ['duration'] }));
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsAverage',
+      'ratingsQuantity',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
 
 // serving static files using express
 app.use(express.static(`${__dirname}/public`));
