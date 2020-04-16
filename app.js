@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -11,11 +12,18 @@ const bookRouter = require('./routes/bookRoutes');
 const app = express();
 
 // GLOBAL MIDDLEWARES
+
+// SET HTTP Headers
+// https://github.com/helmetjs/helmet
+app.use(helmet());
+
+// Development Logging
 if (process.env.NODE_ENV === 'development') {
   // middleware to log the type of request to console
   app.use(morgan('dev'));
 }
 
+// Limit request from same IP
 const limiter = rateLimit({
   // means 100 request from the same IP in one hour
   max: 100,
@@ -25,8 +33,8 @@ const limiter = rateLimit({
 // added /api to make sure we are applying the limiter to the routes starting with /api
 app.use('/api', limiter);
 
-// this is middleware --> data from body is added to the request object with this step
-app.use(express.json());
+// this is bodyParser middleware --> data from body is added to the request object with this step
+app.use(express.json({ limit: '10kb' }));
 
 // serving static files using express
 app.use(express.static(`${__dirname}/public`));
