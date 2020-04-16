@@ -51,8 +51,23 @@ const signToken = (id) => {
   });
 };
 
+const cookieOptions = {
+  expiresIn:
+    new Date(Date.now()) +
+    process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+  // this will make the cookie that the browser cannot modify the cookie
+  httpOnly: true,
+};
+
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  if (process.env.NODE_ENV === 'production') {
+    // the cookie will be sent only in an encrypted connection by using secure: true
+    cookieOptions.secure = true;
+  }
+  res.cookie('jwt', token, cookieOptions);
+  // added the below line to make sure that the password is not visible in the result set
+  user.password = undefined;
   res.status(statusCode).json({ status: 'success', token, data: { user } });
 };
 
