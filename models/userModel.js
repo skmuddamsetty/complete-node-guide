@@ -41,18 +41,37 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: { type: Boolean, default: true, select: false },
 });
 
+//  Document Middlewares Start
 // this is going to run right before the new document is saved
 userSchema.pre('save', async function (next) {
   // this keyword refers to the current document and we are checking if the password has been modified
-  if (!this.isModified('password') || this.isNew) return next();
+  if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   // setting this to undefined will not persist this field to database
   this.passwordConfirm = undefined;
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
+
+// this is going to run right before the new document is saved
+userSchema.pre('save', async function (next) {
+  // this keyword refers to the current document and we are checking if the password has been modified
+  if (!this.isModified('password') || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+//  Document Middlewares End
+
+// Query middleware Starts
+userSchema.pre(/^find/, function (next) {
+  // this here points to the current query that is being executed
+  this.find({ active: { $ne: false } });
+  next();
+});
+// Query middleware Ends
 
 // instance method for password comparision
 // instance method is a method which is available on all documents
