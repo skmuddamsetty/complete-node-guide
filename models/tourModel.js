@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
+// const validator = require('validator');
 
 // defining schema using mongoose
 const tourSchema = new mongoose.Schema(
@@ -11,7 +11,7 @@ const tourSchema = new mongoose.Schema(
       unique: true,
       maxlength: [40, 'A tour name cannot have more than 40 characters'],
       minlength: [10, 'A tour name must have minimum of 10 characters'],
-      validate: [validator.isAlpha, 'Tour name must only contain characters'],
+      // validate: [validator.isAlpha, 'Tour name must only contain characters'],
     },
     slug: String,
     duration: {
@@ -64,6 +64,33 @@ const tourSchema = new mongoose.Schema(
     startDates: [Date],
     price: { type: Number, required: [true, 'A tour must have a price'] },
     secretTour: { type: Boolean, default: false },
+    startLocation: {
+      //GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: {
+          values: ['Point'],
+          message: 'startLocation should be Point',
+        },
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
   },
   { toJSON: { virtuals: true } }
 );
