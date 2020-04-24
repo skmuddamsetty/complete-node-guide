@@ -78,6 +78,7 @@ const tourSchema = new mongoose.Schema(
       address: String,
       description: String,
     },
+    // creates embedded datasets
     locations: [
       {
         type: {
