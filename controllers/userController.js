@@ -13,10 +13,14 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
-  res.status(200).json({ status: 'success', data: { users } });
-});
+// With Handler
+exports.getAllUsers = factory.getAll(User);
+
+// Without Handler
+// exports.getAllUsers = catchAsync(async (req, res) => {
+//   const users = await User.find();
+//   res.status(200).json({ status: 'success', data: { users } });
+// });
 
 // With Handler
 exports.getUser = factory.getOne(User);
