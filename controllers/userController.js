@@ -66,3 +66,12 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 exports.deleteUser = factory.deleteOne(User);
 // DO NOT UPDATE passwords with this one because all the pre save middlewares are not run
 exports.updateUser = factory.updateOne(User);
+
+// /me endPoint
+exports.getMe = (req, res, next) => {
+  // adding the below line because this route is for the logged in user and there won't be any id in the params.
+  // logged in user id will be coming in from req.user through jwt
+  // since we user req.params.id in getOne in factory, we are assiging the params value with value from the req.user.id
+  req.params.id = req.user.id;
+  next();
+};
