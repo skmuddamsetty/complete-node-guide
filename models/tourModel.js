@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const User = require('./userModel');
+// const User = require('./userModel');
 // const validator = require('validator');
 
 // defining schema using mongoose
@@ -93,7 +93,11 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    /* this can be used when embedding the data i.e. for embedding user data into the tour using the pre save document middleware present below
+    guides: Array */
+    // below is used for child referencing
+    // using ref we are establishing data set between tour and user
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   { toJSON: { virtuals: true } }
 );
@@ -117,11 +121,14 @@ tourSchema.pre('save', function (next) {
 // populating the guides array with user objects using pre save hook
 // only works for creating new documents
 // in other words this is embedding. i.e. we are embedding user data into tour data
+// Commented the below code because embedding the user data is not ideal as user data may change frequently, so we have to go for referencing
+/*
 tourSchema.pre('save', async function (next) {
   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
   this.guides = await Promise.all(guidesPromises);
   next();
 });
+*/
 
 // post save hook
 // tourSchema.post('save', function (doc, next) {
