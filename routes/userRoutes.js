@@ -17,9 +17,11 @@ router.patch('/updateMe', authController.protect, userController.updateMe);
 router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 router.route('/').get(userController.getAllUsers);
+
 router
   .route('/:id')
   .get(userController.getUser)
-  .delete(userController.deleteUser);
+  .delete(userController.deleteUser)
+  .patch(userController.updateUser);
 
 module.exports = router;

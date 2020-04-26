@@ -18,11 +18,15 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   res.status(200).json({ status: 'success', data: { users } });
 });
 
-exports.getUser = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route is not yet defined' });
-};
+exports.getUser = catchAsync(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  return res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
 
 exports.deleteMe = catchAsync(async (req, res) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
@@ -42,7 +46,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // 2) update user document
   // filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
-
+  // Note: all Save middlewares are not run with findByIdAndUpdate
   const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
@@ -50,4 +54,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', data: { user } });
 });
 
+// only for admins
 exports.deleteUser = factory.deleteOne(User);
+// DO NOT UPDATE passwords with this one because all the pre save middlewares are not run
+exports.updateUser = factory.updateOne(User);

@@ -167,37 +167,41 @@ exports.getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateTour = catchAsync(async (req, res, next) => {
-  // try {
-  //   // {new: true will send the updated document to the client}
-  //   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-  //     new: true,
-  //     runValidators: true,
-  //   });
-  //   res.status(200).json({
-  //     status: 'success',
-  //     data: {
-  //       tour,
-  //     },
-  //   });
-  // } catch (err) {
-  //   res.status(404).json({ status: 'fail', message: err });
-  // }
+// With Handler function
+exports.updateTour = factory.updateOne(Tour);
 
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
+// Without Handler function
+// exports.updateTour = catchAsync(async (req, res, next) => {
+//   // try {
+//   //   // {new: true will send the updated document to the client}
+//   //   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//   //     new: true,
+//   //     runValidators: true,
+//   //   });
+//   //   res.status(200).json({
+//   //     status: 'success',
+//   //     data: {
+//   //       tour,
+//   //     },
+//   //   });
+//   // } catch (err) {
+//   //   res.status(404).json({ status: 'fail', message: err });
+//   // }
+
+//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   if (!tour) {
+//     return next(new AppError('No tour found with that ID', 404));
+//   }
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour,
+//     },
+//   });
+// });
 
 exports.deleteTour = factory.deleteOne(Tour);
 // Below can be used without handler function.
