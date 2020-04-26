@@ -28,6 +28,19 @@ const reviewSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+/********************Query Middleware Start***********************/
+// using pre query middleware to populate the guides array with user data from users collection
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name photo',
+  }).populate({
+    path: 'tour',
+    select: 'name difficulty price',
+  });
+  next();
+});
+/********************Query Middleware End***********************/
 // creating Model from Schema
 const Review = mongoose.model('Review', reviewSchema);
 
