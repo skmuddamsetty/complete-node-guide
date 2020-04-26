@@ -144,10 +144,20 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
+// using pre query middleware to populate the guides array with user data from users collection
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+  next();
+});
+
 tourSchema.post(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
+
 /********************Query Middleware End***********************/
 
 /********************Aggregation Middleware Start***********************/

@@ -148,6 +148,15 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // }
 
   const tour = await Tour.findById({ _id: req.params.id });
+  // using populate to populate the guides data from users collection
+  // const tour = await Tour.findById({ _id: req.params.id }).populate('guides');
+
+  // use below syntax to select specific fields
+  // commented below populate because populate is ideal to handle in the query middleware to avoid duplicate code on all find queries
+  // const tour = await Tour.findById({ _id: req.params.id }).populate({
+  //   path: 'guides',
+  //   select: '-__v -passwordChangedAt',
+  // });
   if (!tour) {
     return next(new AppError('No tour found with that ID', 404));
   }
