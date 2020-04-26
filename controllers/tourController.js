@@ -39,29 +39,33 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
+// With Handler
+exports.createTour = factory.createOne(Tour);
 
-  // below block was used before having catchAsync function
-  // try {
-  //   // using the Tour model to create the document
-  //   const newTour = await Tour.create(req.body);
-  //   res.status(201).json({
-  //     status: 'success',
-  //     data: {
-  //       tour: newTour,
-  //     },
-  //   });
-  // } catch (err) {
-  //   res.status(400).json({ status: 'fail', message: err });
-  // }
-});
+// Without Handler
+// exports.createTour = catchAsync(async (req, res, next) => {
+//   const newTour = await Tour.create(req.body);
+//   res.status(201).json({
+//     status: 'success',
+//     data: {
+//       tour: newTour,
+//     },
+//   });
+
+// below block was used before having catchAsync function
+// try {
+//   // using the Tour model to create the document
+//   const newTour = await Tour.create(req.body);
+//   res.status(201).json({
+//     status: 'success',
+//     data: {
+//       tour: newTour,
+//     },
+//   });
+// } catch (err) {
+//   res.status(400).json({ status: 'fail', message: err });
+// }
+// });
 
 exports.getAllTours = catchAsync(async (req, res, next) => {
   // try {

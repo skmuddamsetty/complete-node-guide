@@ -15,15 +15,19 @@ exports.setTourUserIds = (req, res, next) => {
   next();
 };
 
-exports.createReview = catchAsync(async (req, res) => {
-  const review = await Review.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: {
-      review,
-    },
-  });
-});
+// With Handler
+exports.createReview = factory.createOne(Review);
+
+// Without Handler
+// exports.createReview = catchAsync(async (req, res) => {
+//   const review = await Review.create(req.body);
+//   res.status(201).json({
+//     status: 'success',
+//     data: {
+//       review,
+//     },
+//   });
+// });
 
 exports.getSingleReview = catchAsync(async (req, res) => {
   const review = await Review.findById(req.params.id);
