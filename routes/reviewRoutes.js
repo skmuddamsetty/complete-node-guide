@@ -17,5 +17,9 @@ router
     reviewController.createReview
   );
 
-router.route('/:id').get(reviewController.getSingleReview);
+router
+  .route('/:id')
+  .get(reviewController.getSingleReview)
+  .delete(reviewController.deleteReview);
+
 module.exports = router;

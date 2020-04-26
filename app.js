@@ -48,7 +48,7 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // this is bodyParser middleware --> data from body is added to the request object with this step
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '100000000kb' }));
 
 // Data Sanitization against NOSQL Query injection and also data sanitization against XSS
 app.use(mongoSanitize());

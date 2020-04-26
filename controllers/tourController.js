@@ -3,6 +3,7 @@ const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const factory = require('./handlerFactory');
 
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -198,27 +199,33 @@ exports.updateTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  // try {
-  //   await Tour.findOneAndDelete(req.params.id);
-  //   // 204 - No Content
-  //   res.status(204).json({
-  //     status: 'success',
-  //     data: null,
-  //   });
-  // } catch (err) {
-  //   res.status(404).json({ status: 'fail', message: err });
-  // }
-  const tour = await Tour.findOneAndDelete(req.params.id);
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-  // 204 - No Content
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.deleteTour = factory.deleteOne(Tour);
+// Below can be used without handler function.
+// exports.deleteTour = catchAsync(async (req, res, next) => {
+// //*******************try/catch*****************************/
+// try {
+//   await Tour.findOneAndDelete(req.params.id);
+//   // 204 - No Content
+//   res.status(204).json({
+//     status: 'success',
+//     data: null,
+//   });
+// } catch (err) {
+//   res.status(404).json({ status: 'fail', message: err });
+// }
+// //*******************try/catch*****************************/
+// //*******************without handler function*****************************/
+// const tour = await Tour.findOneAndDelete(req.params.id);
+// if (!tour) {
+//   return next(new AppError('No tour found with that ID', 404));
+// }
+// //204 - No Content
+// res.status(204).json({
+//   status: 'success',
+//   data: null,
+// });
+// //*******************without handler function*****************************/
+// });
 
 // Aggregation pipeline Start
 // https://docs.mongodb.com/manual/
