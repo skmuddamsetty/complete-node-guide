@@ -6,13 +6,14 @@ const authController = require('../controllers/authController');
 // for example for nested routes, the params are coming from tourRouter, ex: /:tourId
 const router = express.Router({ mergeParams: true });
 
+router.use(authController.protect);
+
 router
   .route('/')
   // GET /:tourId/reviews
   .get(reviewController.getAllReviews)
   // POST /:tourId/reviews
   .post(
-    authController.protect,
     authController.restrictTo('user'),
     reviewController.setTourUserIds,
     reviewController.createReview
@@ -22,7 +23,13 @@ router
   .route('/:id')
   .get(reviewController.getReview)
   .get(reviewController.getSingleReview)
-  .delete(reviewController.deleteReview)
-  .patch(reviewController.updateReview);
+  .delete(
+    authController.restrictTo('user', 'admin'),
+    reviewController.deleteReview
+  )
+  .patch(
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReview
+  );
 
 module.exports = router;

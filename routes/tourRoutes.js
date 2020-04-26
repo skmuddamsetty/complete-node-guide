@@ -29,18 +29,32 @@ router
 
 router.route('/tour-stats').get(tourContoller.getTourStats);
 
-router.route('/monthly-plan/:year').get(tourContoller.getMonthlyPlan);
+router
+  .route('/monthly-plan/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide', 'guide'),
+    tourContoller.getMonthlyPlan
+  );
 
 router
   .route('/')
-  .get(authController.protect, tourContoller.getAllTours)
+  .get(tourContoller.getAllTours)
   // .post(tourContoller.checkBody, tourContoller.createTour);
-  .post(tourContoller.createTour);
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourContoller.createTour
+  );
 
 router
   .route('/:id')
   .get(tourContoller.getTour)
-  .patch(tourContoller.updateTour)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourContoller.updateTour
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
