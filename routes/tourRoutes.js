@@ -1,12 +1,27 @@
 const express = require('express');
 const tourContoller = require('../controllers/tourController');
 const authController = require('../controllers/authController');
-const reviewController = require('../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
 
 // param middleware and is only going to work on the tourRoutes and only when there is id in the params
 // router.param('id', tourContoller.checkID);
+
+// Implementing Nested Routes
+// POST /tour/awdnbng23/reviews
+// commenting because this is not the right place to implement the nested routes and to avoid code duplication
+// router
+//   .route('/:tourId/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createReview
+//   );
+
+// added the below line to overcome the above problem
+// mounting the reviewRouter
+router.use('/:tourId/reviews', reviewRouter);
 
 router
   .route('/top-5-cheap')
@@ -32,13 +47,4 @@ router
     tourContoller.deleteTour
   );
 
-// Implementing Nested Routes
-// POST /tour/awdnbng23/reviews
-router
-  .route('/:tourId/reviews')
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reviewController.createReview
-  );
 module.exports = router;
