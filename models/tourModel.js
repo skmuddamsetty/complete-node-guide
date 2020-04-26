@@ -99,7 +99,8 @@ const tourSchema = new mongoose.Schema(
     // using ref we are establishing data set between tour and user
     guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
-  { toJSON: { virtuals: true } }
+  // below lines needs to be present so that the virtual properties can be displayed in the output
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 /********************Virtual Properties Start***********************/
