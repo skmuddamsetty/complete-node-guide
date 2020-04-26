@@ -2,6 +2,15 @@ const Review = require('../models/reviewModel');
 const catchAsync = require('../utils/catchAsync');
 
 exports.createReview = catchAsync(async (req, res) => {
+  // added to allow nested routes
+  // so user can either specify these in the body or in the url
+  if (!req.body.tour) {
+    req.body.tour = req.params.tourId;
+  }
+  // added to allow nested routes
+  if (!req.body.user) {
+    req.body.user = req.user.id;
+  }
   const review = await Review.create(req.body);
   res.status(201).json({
     status: 'success',
