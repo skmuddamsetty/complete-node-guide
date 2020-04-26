@@ -2,7 +2,7 @@
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+// const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
 // const tours = JSON.parse(
@@ -141,35 +141,39 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getTour = catchAsync(async (req, res, next) => {
-  // try {
-  //   const tour = await Tour.findById({ _id: req.params.id });
-  //   res.status(200).json({
-  //     status: 'success',
-  //     data: { tour },
-  //   });
-  // } catch (err) {
-  //   res.status(404).json({ status: 'fail', message: err });
-  // }
+// With Handler
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 
-  const tour = await Tour.findById({ _id: req.params.id }).populate('reviews');
-  // using populate to populate the guides data from users collection
-  // const tour = await Tour.findById({ _id: req.params.id }).populate('guides');
+// Without Handler
+// exports.getTour = catchAsync(async (req, res, next) => {
+//   // try {
+//   //   const tour = await Tour.findById({ _id: req.params.id });
+//   //   res.status(200).json({
+//   //     status: 'success',
+//   //     data: { tour },
+//   //   });
+//   // } catch (err) {
+//   //   res.status(404).json({ status: 'fail', message: err });
+//   // }
 
-  // use below syntax to select specific fields
-  // commented below populate because populate is ideal to handle in the query middleware to avoid duplicate code on all find queries
-  // const tour = await Tour.findById({ _id: req.params.id }).populate({
-  //   path: 'guides',
-  //   select: '-__v -passwordChangedAt',
-  // });
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: { tour },
-  });
-});
+//   const tour = await Tour.findById({ _id: req.params.id }).populate('reviews');
+//   // using populate to populate the guides data from users collection
+//   // const tour = await Tour.findById({ _id: req.params.id }).populate('guides');
+
+//   // use below syntax to select specific fields
+//   // commented below populate because populate is ideal to handle in the query middleware to avoid duplicate code on all find queries
+//   // const tour = await Tour.findById({ _id: req.params.id }).populate({
+//   //   path: 'guides',
+//   //   select: '-__v -passwordChangedAt',
+//   // });
+//   if (!tour) {
+//     return next(new AppError('No tour found with that ID', 404));
+//   }
+//   res.status(200).json({
+//     status: 'success',
+//     data: { tour },
+//   });
+// });
 
 // With Handler function
 exports.updateTour = factory.updateOne(Tour);

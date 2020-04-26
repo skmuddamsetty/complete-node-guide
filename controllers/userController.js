@@ -18,15 +18,19 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   res.status(200).json({ status: 'success', data: { users } });
 });
 
-exports.getUser = catchAsync(async (req, res) => {
-  const user = await User.findById(req.params.id);
-  return res.status(200).json({
-    status: 'success',
-    data: {
-      user,
-    },
-  });
-});
+// With Handler
+exports.getUser = factory.getOne(User);
+
+// Wihout Handler
+// exports.getUser = catchAsync(async (req, res) => {
+//   const user = await User.findById(req.params.id);
+//   return res.status(200).json({
+//     status: 'success',
+//     data: {
+//       user,
+//     },
+//   });
+// });
 
 exports.deleteMe = catchAsync(async (req, res) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
