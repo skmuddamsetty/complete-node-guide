@@ -8,7 +8,9 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route('/')
+  // GET /:tourId/reviews
   .get(reviewController.getAllReviews)
+  // POST /:tourId/reviews
   .post(
     authController.protect,
     authController.restrictTo('user'),

@@ -31,7 +31,11 @@ exports.getSingleReview = catchAsync(async (req, res) => {
 });
 
 exports.getAllReviews = catchAsync(async (req, res) => {
-  const reviews = await Review.find();
+  let filter = {};
+  if (req.params.tourId) {
+    filter = { tour: req.params.tourId };
+  }
+  const reviews = await Review.find(filter);
   res.status(200).json({
     status: 'success',
     results: reviews.length,
