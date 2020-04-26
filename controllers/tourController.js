@@ -1,6 +1,6 @@
 // const fs = require('fs');
 const Tour = require('../models/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
+// const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 // const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
@@ -67,79 +67,83 @@ exports.createTour = factory.createOne(Tour);
 // }
 // });
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  // try {
-  // using the filter object of mongodb to build the Query
-  // const queryObj = { ...req.query };
-  // const excludedFields = ['page', 'sort', 'limit', 'fields'];
-  // excludedFields.forEach((field) => delete queryObj[field]);
+// With Handler
+exports.getAllTours = factory.getAll(Tour);
 
-  // // 2) ADVANCED FILTERING // {difficulty:'easy', duration:{$gte:5}}
-  // let queryStr = JSON.stringify(queryObj);
-  // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-  // let query = Tour.find(JSON.parse(queryStr));
+// Without Handler
+// exports.getAllTours = catchAsync(async (req, res, next) => {
+//   // try {
+//   // using the filter object of mongodb to build the Query
+//   // const queryObj = { ...req.query };
+//   // const excludedFields = ['page', 'sort', 'limit', 'fields'];
+//   // excludedFields.forEach((field) => delete queryObj[field]);
 
-  // // 3) SORTING
-  // if (req.query.sort) {
-  //   const sortBy = req.query.sort.split(',').join(' ');
-  //   query = query.sort(sortBy);
-  // } else {
-  //   query = query.sort('-createdAt');
-  // }
+//   // // 2) ADVANCED FILTERING // {difficulty:'easy', duration:{$gte:5}}
+//   // let queryStr = JSON.stringify(queryObj);
+//   // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+//   // let query = Tour.find(JSON.parse(queryStr));
 
-  // // 4) LIMIT FIELDS
-  // if (req.query.fields) {
-  //   const projectedFields = req.query.fields.split(',').join(' ');
-  //   query = query.select(projectedFields);
-  // } else {
-  //   query = query.select('-__v');
-  // }
+//   // // 3) SORTING
+//   // if (req.query.sort) {
+//   //   const sortBy = req.query.sort.split(',').join(' ');
+//   //   query = query.sort(sortBy);
+//   // } else {
+//   //   query = query.sort('-createdAt');
+//   // }
 
-  // // 5) PAGINATION
-  // // 1-10 --> Page 1, 11-20 --> Page 2
-  // // mongodb query --> page=2&limit=10
-  // const page = req.query.page * 1 || 1;
-  // const limit = req.query.limit * 1 || 100;
-  // const skip = (page - 1) * limit;
-  // query = query.skip(skip).limit(limit);
+//   // // 4) LIMIT FIELDS
+//   // if (req.query.fields) {
+//   //   const projectedFields = req.query.fields.split(',').join(' ');
+//   //   query = query.select(projectedFields);
+//   // } else {
+//   //   query = query.select('-__v');
+//   // }
 
-  // EXECUTE QUERY
-  //   const features = new APIFeatures(Tour.find(), req.query)
-  //     .filter()
-  //     .sort()
-  //     .limit()
-  //     .paginate();
+//   // // 5) PAGINATION
+//   // // 1-10 --> Page 1, 11-20 --> Page 2
+//   // // mongodb query --> page=2&limit=10
+//   // const page = req.query.page * 1 || 1;
+//   // const limit = req.query.limit * 1 || 100;
+//   // const skip = (page - 1) * limit;
+//   // query = query.skip(skip).limit(limit);
 
-  //   const tours = await features.query;
+//   // EXECUTE QUERY
+//   //   const features = new APIFeatures(Tour.find(), req.query)
+//   //     .filter()
+//   //     .sort()
+//   //     .limit()
+//   //     .paginate();
 
-  //   // another way of writing the query
-  //   // const tours = await Tour.find()
-  //   //   .where('duration')
-  //   //   .equals(5)
-  //   //   .where('difficulty')
-  //   //   .equals('easy');
-  //   res.status(200).json({
-  //     status: 'success',
-  //     results: tours.length,
-  //     data: { tours },
-  //   });
-  // } catch (err) {
-  //   res.status(404).json({ status: 'fail', message: err });
-  // }
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limit()
-    .paginate();
+//   //   const tours = await features.query;
 
-  const tours = await features.query;
+//   //   // another way of writing the query
+//   //   // const tours = await Tour.find()
+//   //   //   .where('duration')
+//   //   //   .equals(5)
+//   //   //   .where('difficulty')
+//   //   //   .equals('easy');
+//   //   res.status(200).json({
+//   //     status: 'success',
+//   //     results: tours.length,
+//   //     data: { tours },
+//   //   });
+//   // } catch (err) {
+//   //   res.status(404).json({ status: 'fail', message: err });
+//   // }
+//   const features = new APIFeatures(Tour.find(), req.query)
+//     .filter()
+//     .sort()
+//     .limit()
+//     .paginate();
 
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: { tours },
-  });
-});
+//   const tours = await features.query;
+
+//   res.status(200).json({
+//     status: 'success',
+//     results: tours.length,
+//     data: { tours },
+//   });
+// });
 
 // With Handler
 exports.getTour = factory.getOne(Tour, { path: 'reviews' });

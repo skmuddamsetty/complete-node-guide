@@ -39,20 +39,25 @@ exports.getSingleReview = catchAsync(async (req, res) => {
   });
 });
 
-exports.getAllReviews = catchAsync(async (req, res) => {
-  let filter = {};
-  if (req.params.tourId) {
-    filter = { tour: req.params.tourId };
-  }
-  const reviews = await Review.find(filter);
-  res.status(200).json({
-    status: 'success',
-    results: reviews.length,
-    data: {
-      reviews,
-    },
-  });
-});
+// With Handler
+exports.getAllReviews = factory.getAll(Review);
+
+// Without Handler
+// exports.getAllReviews = catchAsync(async (req, res) => {
+//   // moved the below logic to handler function in getAll method
+//   // let filter = {};
+//   // if (req.params.tourId) {
+//   //   filter = { tour: req.params.tourId };
+//   // }
+//   const reviews = await Review.find(filter);
+//   res.status(200).json({
+//     status: 'success',
+//     results: reviews.length,
+//     data: {
+//       reviews,
+//     },
+//   });
+// });
 
 exports.getReview = factory.getOne(Review);
 exports.deleteReview = factory.deleteOne(Review);
