@@ -108,6 +108,14 @@ const tourSchema = new mongoose.Schema(
 tourSchema.virtual('durationWeeks').get(function () {
   return Math.ceil(this.duration / 7);
 });
+
+// Virtual Populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  // below foreignField 'tour' is the property present in reviewModel.js
+  foreignField: 'tour',
+  localField: '_id',
+});
 /********************Virtual Properties End***********************/
 
 /********************Document Middlewares Start***********************/

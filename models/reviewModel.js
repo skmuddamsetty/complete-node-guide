@@ -31,12 +31,19 @@ const reviewSchema = new mongoose.Schema(
 /********************Query Middleware Start***********************/
 // using pre query middleware to populate the guides array with user data from users collection
 reviewSchema.pre(/^find/, function (next) {
+  // commented below part as it is creating a chain of populates
+  // and it makes sense to not populate the review with tour data
+  // therefore commenting the populate for tour
+  // this.populate({
+  //   path: 'user',
+  //   select: 'name photo',
+  // }).populate({
+  //   path: 'tour',
+  //   select: 'name difficulty price',
+  // });
   this.populate({
     path: 'user',
     select: 'name photo',
-  }).populate({
-    path: 'tour',
-    select: 'name difficulty price',
   });
   next();
 });

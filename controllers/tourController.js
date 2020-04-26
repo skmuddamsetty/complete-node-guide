@@ -147,7 +147,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
   //   res.status(404).json({ status: 'fail', message: err });
   // }
 
-  const tour = await Tour.findById({ _id: req.params.id });
+  const tour = await Tour.findById({ _id: req.params.id }).populate('reviews');
   // using populate to populate the guides data from users collection
   // const tour = await Tour.findById({ _id: req.params.id }).populate('guides');
 
