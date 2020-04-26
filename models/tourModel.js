@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('./userModel');
 // const validator = require('validator');
 
 // defining schema using mongoose
@@ -92,17 +93,19 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    guides: Array,
   },
   { toJSON: { virtuals: true } }
 );
 
-// virtual properties
+/********************Virtual Properties Start***********************/
 // this will be created each time we get the data out of the database
 tourSchema.virtual('durationWeeks').get(function () {
   return Math.ceil(this.duration / 7);
 });
+/********************Virtual Properties End***********************/
 
-// Document Middlewares
+/********************Document Middlewares Start***********************/
 // pre is gonna run before an actual event i.e. runs before only on .save() and .create()
 // the function inside pre is called before a document is saved to the database
 // pre save hook
@@ -111,12 +114,22 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
+// populating the guides array with user objects using pre save hook
+// only works for creating new documents
+// in other words this is embedding. i.e. we are embedding user data into tour data
+tourSchema.pre('save', async function (next) {
+  const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+  this.guides = await Promise.all(guidesPromises);
+  next();
+});
+
 // post save hook
 // tourSchema.post('save', function (doc, next) {
 //   next();
 // });
+/********************Document Middlewares End***********************/
 
-// QUERY Middleware
+/********************Query Middleware Start***********************/
 // this keyword will point at current query but not current document
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
@@ -128,13 +141,16 @@ tourSchema.post(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
+/********************Query Middleware End***********************/
 
-// Aggregation Middleware
+/********************Aggregation Middleware Start***********************/
 // this points to the current aggregation object
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
+/********************Aggregation Middleware End***********************/
+
 // creating Model from Schema
 const Tour = mongoose.model('Tour', tourSchema);
 
