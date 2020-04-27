@@ -29,6 +29,10 @@ const reviewSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+/********************Indexes Start***********************/
+// creating compound index for user and tour and with the options we are saying that the combination should be unique
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+/********************Indexes End***********************/
 /********************Query Middleware Start***********************/
 // using pre query middleware to populate the guides array with user data from users collection
 reviewSchema.pre(/^find/, function (next) {
@@ -71,7 +75,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
     },
   ]);
   // persisting results to Tour Document
-  if (stats.length > 0) {
+  if (stats && stats.length > 0) {
     await Tour.findByIdAndUpdate(tourId, {
       ratingsQuantity: stats[0].nRating,
       ratingsAverage: stats[0].avgRating,

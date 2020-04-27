@@ -36,6 +36,8 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, 'A tour must have a rating of above 1.0'],
       max: [5, 'A tour must have a rating below or equal to 5'],
+      // this set function will run each time there is a new value for ratingsAverage field
+      set: (value) => Math.round(value * 10),
     },
     ratingsQuantity: { type: Number, default: 0 },
     priceDiscount: {
