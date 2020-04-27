@@ -103,6 +103,12 @@ const tourSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+/********************Indexes Start***********************/
+// here we are creating index on price field and 1 means that we are sorting the price index in ascending order and -1 stands for descending order
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+/********************Indexes End***********************/
+
 /********************Virtual Properties Start***********************/
 // this will be created each time we get the data out of the database
 tourSchema.virtual('durationWeeks').get(function () {
