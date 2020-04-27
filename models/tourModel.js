@@ -109,6 +109,7 @@ const tourSchema = new mongoose.Schema(
 // here we are creating index on price field and 1 means that we are sorting the price index in ascending order and -1 stands for descending order
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 /********************Indexes End***********************/
 
 /********************Virtual Properties Start***********************/
