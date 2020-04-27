@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const path = require('path');
 
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -16,6 +17,13 @@ const reviewRouter = require('./routes/reviewRoutes');
 const app = express();
 
 // GLOBAL MIDDLEWARES
+
+// Template Engines
+// express has the capability to handle pug templates out of the box so we do not need to install pug
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+// serving static files using express
+app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS
 app.use(function (req, res, next) {
@@ -70,9 +78,6 @@ app.use(
   })
 );
 
-// serving static files using express
-app.use(express.static(`${__dirname}/public`));
-
 // creating our own middleware
 app.use((req, res, next) => {
   console.log(`Hello From MiddleWare! 🖖`);
@@ -86,6 +91,11 @@ app.use((req, res, next) => {
   // to get the headers
   // console.log(req.headers);
   next();
+});
+
+// API ROUTES
+app.get('/', (req, res) => {
+  res.status(200).render('base', { tour: 'The Forest Hiker', user: 'John' });
 });
 
 app.use('/api/v1/tours', tourRouter);
