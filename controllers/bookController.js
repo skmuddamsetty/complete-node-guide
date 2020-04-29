@@ -49,5 +49,5 @@ exports.deleteBook = catchAsync(async (req, res, next) => {
       new AppError(`Book with ID: ${req.params.id} is not found!`, 404)
     );
   }
-  res.status(201).json({ status: 'success', data: null });
+  res.status(204).json({ status: 'success', data: null });
 });

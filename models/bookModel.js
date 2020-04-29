@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 
 // defining schema using mongoose
 const bookSchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
-    required: [true, 'A book must have a name'],
+    required: [true, 'Please provide a name for book!'],
     unique: true,
   },
   publisher: {
     type: String,
-    required: [true, 'A book must have a publisher'],
+    required: [true, 'Please provide a publisher for book!'],
   },
   noOfPages: {
     type: Number,
@@ -19,18 +19,16 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A Book must have difficulty'],
   },
-  ratingsAverage: {
+  avgRating: {
     type: Number,
     default: 4.5,
   },
-  ratingsQuantity: { type: Number, default: 0 },
-  priceDiscount: Number,
-  summary: {
+  numberOfRatings: { type: Number, default: 0 },
+  description: {
     type: String,
     trim: true,
     required: [true, 'A Book must have a summary'],
   },
-  description: { type: String, trim: true },
   imageCover: {
     type: String,
     required: [true, 'A Book must have an imageCover'],
@@ -38,7 +36,7 @@ const bookSchema = new mongoose.Schema({
   images: [String],
   authors: [String],
   createdAt: { type: Date, default: Date.now() },
-  publicationDates: [Date],
+  publishedDates: [Date],
   price: { type: Number, required: [true, 'A book must have a price'] },
 });
 
