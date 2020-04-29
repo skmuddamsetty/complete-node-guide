@@ -12,6 +12,7 @@ const AppError = require('./utils/appError');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const bookRouter = require('./routes/bookRoutes');
+const bookRouterV2 = require('./routes/booksRoutesV2');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
@@ -100,6 +101,7 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/books', bookRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v2/books', bookRouterV2);
 
 // handle invalid routes
 app.all('*', (req, res, next) => {

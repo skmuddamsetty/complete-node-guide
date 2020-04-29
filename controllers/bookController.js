@@ -1,6 +1,7 @@
 const Book = require('../models/bookModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const factory = require('./handlerFactory');
 
 exports.createBook = catchAsync(async (req, res, next) => {
   const book = await Book.create(req.body);
@@ -51,3 +52,9 @@ exports.deleteBook = catchAsync(async (req, res, next) => {
   }
   res.status(204).json({ status: 'success', data: null });
 });
+
+exports.getAllBooksV2 = factory.getAll(Book);
+exports.createBookV2 = factory.createOne(Book);
+exports.updateBookV2 = factory.updateOne(Book);
+exports.deleteBookV2 = factory.deleteOne(Book);
+exports.getBookV2 = factory.getOne(Book);
