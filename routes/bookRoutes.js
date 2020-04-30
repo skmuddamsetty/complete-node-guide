@@ -1,8 +1,11 @@
 const express = require('express');
 const bookController = require('../controllers/bookController');
 const authController = require('../controllers/authController');
+const bookReviewRouter = require('./books/bookReviewRoutes');
 
 const router = express.Router();
+
+router.use('/:bookId/reviews', bookReviewRouter);
 
 router
   .route('/')

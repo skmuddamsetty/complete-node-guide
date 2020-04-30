@@ -68,6 +68,9 @@ exports.getAll = (Model) =>
     if (req.params.tourId) {
       filter = { tour: req.params.tourId };
     }
+    if (req.params.bookId) {
+      filter = { book: req.params.bookId };
+    }
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
