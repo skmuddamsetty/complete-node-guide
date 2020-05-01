@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const BookAuthor = require('./bookAuthorModel');
 
 // defining schema using mongoose
 const bookSchema = new mongoose.Schema({
@@ -39,6 +40,16 @@ const bookSchema = new mongoose.Schema({
   price: { type: Number, required: [true, 'A book must have a price'] },
 });
 
+/********************Document Middlewares Start***********************/
+// Saving to BookAuthor
+bookSchema.pre('save', async function (next) {
+  const bookAuthorsPromises = this.authors.map(
+    async (id) => await BookAuthor.create({ book: this._id, author: id })
+  );
+  await Promise.all(bookAuthorsPromises);
+  next();
+});
+/********************Document Middlewares End***********************/
 // creating Model from Schema
 const Book = mongoose.model('Book', bookSchema);
 
