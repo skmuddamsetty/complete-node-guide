@@ -47,6 +47,35 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// used only for rendering pages therefore no errors
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    // 1) validate token
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
+
+    // 2) check if the user still exists
+    const freshUser = await User.findById(decoded.id);
+    if (!freshUser) {
+      // simply moving onto next middleware as nothing will happen
+      return next();
+    }
+    // 3) check if user changed the password after issuing the JWT
+    if (freshUser.changedPasswordAfter(decoded.iat)) {
+      // simply moving onto next middleware as nothing will happen
+      return next();
+    }
+    // 4) There is a logged in user
+    // using locals we can set variables to the template so each and every pug template will have the hold of the variable user
+    res.locals.user = freshUser;
+    return next();
+  }
+  // this is needed because if there is no cookie we still need to move to the next middleware
+  next();
+});
+
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
