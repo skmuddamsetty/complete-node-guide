@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -59,6 +60,9 @@ app.use('/api', limiter);
 // this is bodyParser middleware --> data from body is added to the request object with this step
 app.use(express.json({ limit: '100000000kb' }));
 
+// Cookie Parser - used to parse the data from cookies
+app.use(cookieParser());
+
 // Data Sanitization against NOSQL Query injection and also data sanitization against XSS
 app.use(mongoSanitize());
 
@@ -91,6 +95,8 @@ app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   // to get the headers
   // console.log(req.headers);
+  // to get the cookies
+  console.log(req.cookies);
   next();
 });
 
