@@ -21,3 +21,9 @@ exports.getTour = catchAsync(async (req, res) => {
   // 3) Render Template Using Data from Step 1
   res.status(200).render('tour', { tour });
 });
+
+exports.login = catchAsync(async (req, res) => {
+  // 1) Build a Template
+  // 2) Render Template Using Data from Step 1
+  res.status(200).render('login');
+});
