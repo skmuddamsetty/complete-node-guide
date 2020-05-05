@@ -48,33 +48,37 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 // used only for rendering pages therefore no errors
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
-    // 1) validate token
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET
-    );
+    try {
+      // 1) validate token
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
 
-    // 2) check if the user still exists
-    const freshUser = await User.findById(decoded.id);
-    if (!freshUser) {
-      // simply moving onto next middleware as nothing will happen
+      // 2) check if the user still exists
+      const freshUser = await User.findById(decoded.id);
+      if (!freshUser) {
+        // simply moving onto next middleware as nothing will happen
+        return next();
+      }
+      // 3) check if user changed the password after issuing the JWT
+      if (freshUser.changedPasswordAfter(decoded.iat)) {
+        // simply moving onto next middleware as nothing will happen
+        return next();
+      }
+      // 4) There is a logged in user
+      // using locals we can set variables to the template so each and every pug template will have the hold of the variable user
+      res.locals.user = freshUser;
+      return next();
+    } catch (err) {
       return next();
     }
-    // 3) check if user changed the password after issuing the JWT
-    if (freshUser.changedPasswordAfter(decoded.iat)) {
-      // simply moving onto next middleware as nothing will happen
-      return next();
-    }
-    // 4) There is a logged in user
-    // using locals we can set variables to the template so each and every pug template will have the hold of the variable user
-    res.locals.user = freshUser;
-    return next();
   }
   // this is needed because if there is no cookie we still need to move to the next middleware
   next();
-});
+};
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -223,3 +227,11 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 4) Log the user in, send JWT
   createAndSendToken(user, 200, res);
 });
+
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expiresIn: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
